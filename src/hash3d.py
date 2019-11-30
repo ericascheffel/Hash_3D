@@ -25,20 +25,21 @@ class Tabuleiro:
     def pontua(self, cubo):
         pontos = self.crivo(cubo)
         # [print(nivel) for nivel in cubo]
-        linhas_y = [zip(*nivel) for nivel in cubo]
-        # [print([[x for x in y] for y in nivel]) for nivel in linhas_y]
-        pontos += self.crivo(linhas_y)
         linhas_z = [[[casa for casa in linha] for linha in nivel] for nivel in zip(*cubo)]
         # [print([[x for x in y] for y in nivel]) for nivel in linhas_z]
         pontos += self.crivo(linhas_z)
         colunas_z = [[[casa for casa in linha] for linha in zip(*nivel)] for nivel in zip(*cubo)]
-        [print([[x for x in y] for y in nivel]) for nivel in colunas_z]
+        # [print([[x for x in y] for y in nivel]) for nivel in colunas_z]
+        print(self.mostra(cubo))
         pontos += self.crivo(colunas_z)
-        linhas_x = [zip(*[[casa for casa in linha] for linha in nivel]) for nivel in cubo]
-        pontos += self.crivo(linhas_x)
 
         print("Número de acertos", pontos)
         return pontos
+
+    @staticmethod
+    def mostra(tabuleiro_):
+        mostra = "{}{}{} "*9
+        return mostra.format(*[peca for nivel in tabuleiro_ for linha in nivel for peca in linha])
 
     @staticmethod
     def crivo(tabuleiro_):
@@ -66,8 +67,11 @@ def main():
 
 if __name__ == '__main__':
     tabuleiro = main()
-    velha = tabuleiro.atualiza(list(range(1, 28)))
-    print("Numero de velhas", velha)
+    pontos = tabuleiro.atualiza(list(range(1, 28)))
+    assert 10 == pontos, f"no entanto deu {pontos}"
+    pontos = tabuleiro.atualiza([1]*27)
+    assert 54 == pontos, f"no entanto deu {pontos}"
+    print("Numero de pontos", pontos)
 
     '''verticais_ = [zip(*nivel) for nivel in tabuleiro.peca_cor]
     verticais_ = [[[casa for casa in linha] for linha in nivel]for nivel in verticais_]
