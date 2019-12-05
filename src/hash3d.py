@@ -1,8 +1,8 @@
-from time import sleep
 import copy
+from time import sleep
 import serial
 
-leitura = object()  # serial.Serial('COM7', 9600)
+leitura = serial.Serial('COM7', 9600)
 
 
 class Tabuleiro:
@@ -23,15 +23,25 @@ class Tabuleiro:
         return self.pontua(self.peca_cor) + self.pontua(self.peca_dot)
 
     def pontua(self, cubo):
-        pontos = self.crivo(cubo)
+        diagx0 = [[linha[desloca:][0]for desloca, linha in enumerate(nivel)]for nivel in cubo]
+        diagx1 = [[linha[:3-desloca:][-1] for desloca, linha in enumerate(nivel)]for nivel in cubo]
+        pontos = self.crivo([diagx0,diagx1])
+        pontos += self.crivo(cubo)
         # [print(nivel) for nivel in cubo]
-        linhas_z = [[[casa for casa in linha] for linha in nivel] for nivel in zip(*cubo)]
+        linhas_z = [[[casa for casa in linha] for linha in zip(*nivel)] for nivel in cubo]
         # [print([[x for x in y] for y in nivel]) for nivel in linhas_z]
+        diagy0 = [[linha[desloca:][0] for desloca, linha in enumerate(nivel)]for nivel in linhas_z]
+        diagy1 = [[linha[:3 - desloca:][-1] for desloca, linha in enumerate(nivel)]for nivel in linhas_z]
+        pontos += self.crivo([diagy0, diagx1])
         pontos += self.crivo(linhas_z)
         colunas_z = [[[casa for casa in linha] for linha in zip(*nivel)] for nivel in zip(*cubo)]
         # [print([[x for x in y] for y in nivel]) for nivel in colunas_z]
         print(self.mostra(cubo))
+        diagz0 = [[linha[desloca:][0] for desloca, linha in enumerate(nivel)]for nivel in colunas_z]
+        diagz1 = [[linha[:3 - desloca:][-1] for desloca, linha in enumerate(nivel)]for nivel in colunas_z]
+        pontos += self.crivo([diagz0, diagz1])
         pontos += self.crivo(colunas_z)
+        print(diagx0, diagx1, diagy0, diagy1, diagz0, diagz1)
 
         print("Número de acertos", pontos)
         return pontos
@@ -67,11 +77,11 @@ def main():
 
 if __name__ == '__main__':
     tabuleiro = main()
-    pontos = tabuleiro.atualiza(list(range(1, 28)))
-    assert 10 == pontos, f"no entanto deu {pontos}"
-    pontos = tabuleiro.atualiza([1]*27)
-    assert 54 == pontos, f"no entanto deu {pontos}"
-    print("Numero de pontos", pontos)
+    #pontos = tabuleiro.atualiza(list(range(1, 28)))
+    #assert 10 == pontos, f"no entanto deu {pontos}"
+    #pontos = tabuleiro.atualiza([1]*27)
+    #assert 54 == pontos, f"no entanto deu {pontos}"
+    #print("Numero de pontos", pontos)
 
     '''verticais_ = [zip(*nivel) for nivel in tabuleiro.peca_cor]
     verticais_ = [[[casa for casa in linha] for linha in nivel]for nivel in verticais_]
@@ -81,11 +91,8 @@ if __name__ == '__main__':
     [print(nivel) for nivel in tabuleiro.peca_cor]
     [print(nivel) for nivel in altitudes]
     [print(nivel) for nivel in azimutes]'''
-    # [print(nivel) for nivel in verticais_]
-    # assert tabuleiro.casa[0][0] == [1,0,0], f" mas era {tabuleiro.casa[0][0]}"
-    # tabuleiro.atualiza([2]+[0]*26)
-    # assert tabuleiro.casa[0][0] == [2, 0, 0], f" mas era {tabuleiro.casa[0][0]}"
 
-    for i in range(0):
+
+    for i in range(30):
         tabuleiro.leitor()
         sleep(1)
