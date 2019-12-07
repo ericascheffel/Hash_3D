@@ -4,13 +4,13 @@ import serial
 
 leitura = serial.Serial('COM7', 9600)
 
+
 class Tabuleiro:
     def __init__(self):
         self.casa = [[[0, 0, 0]for _ in range(3)]for __ in range(3)]
         self.valor = ""
         self.peca_cor = self.peca_dot = self.casa
         self.atualiza()
-
     def atualiza(self, arduino=(0,)*27):
         arduino = [arduino[0:9], arduino[9:18], arduino[18:27]]
         self.casa = [[linha[0:3], linha[3:6], linha[6:9]] for linha in arduino]
@@ -22,6 +22,7 @@ class Tabuleiro:
         return self.pontua(self.peca_cor) + self.pontua(self.peca_dot)
 
     def pontua(self, cubo):
+
         pontos = self.crivo(cubo)
         diag = ([[linha[desloca:][0]
                    for desloca, linha in enumerate(nivel)] for nivel in cubo],
@@ -46,23 +47,18 @@ class Tabuleiro:
                    for desloca, linha in enumerate(nivel)] for nivel in colunas_z],
                 [[linha[:3 - desloca:][-1]
                    for desloca, linha in enumerate(nivel)] for nivel in colunas_z])
-        # print(diag)
+        print(diag)
         pontos += self.crivo(diag)
         print(self.mostra(cubo))
-        diagz0 = [[linha[desloca:][0] for desloca, linha in enumerate(nivel)]for nivel in colunas_z]
-        diagz1 = [[linha[:3 - desloca:][-1] for desloca, linha in enumerate(nivel)]for nivel in colunas_z]
-        pontos += self.crivo([diagz0, diagz1])
         pontos += self.crivo(colunas_z)
-        print(diagx0, diagx1, diagy0, diagy1, diagz0, diagz1)
-
-        # print("Número de acertos", pontos)
+        #print(diagx0, diagx1, diagy0, diagy1, diagz0, diagz1)
+        print("Número de acertos", pontos)
         return pontos
 
     @staticmethod
     def mostra(tabuleiro_):
         mostra = "{}{}{} "*9
         return mostra.format(*[peca for nivel in tabuleiro_ for linha in nivel for peca in linha])
-
     @staticmethod
     def crivo(tabuleiro_):
         return sum([1 if (len(set(linha)) == 1 and 0 not in linha) else 0 for nivel in tabuleiro_ for linha in nivel])
@@ -92,21 +88,18 @@ def main():
 
 if __name__ == '__main__':
     tabuleiro = main()
-    
+
     '''pontos = tabuleiro.atualiza(list(range(1, 28)))
     assert 10 == pontos, f"no entanto deu {pontos}"
     pontos = tabuleiro.atualiza([1]*27)
     assert 54 == pontos, f"no entanto deu {pontos}"
     print("Numero de pontos", pontos)
-
     verticais_ = [zip(*nivel) for nivel in tabuleiro.peca_cor]
-    verticais_ = [[[casa for casa in linha] for linha in nivel]for nivel in verticais_]
+    verticais_ = [[[casa for casa in linha] for linha in nivel]for nivel in verticais_]    
     altitudes = [[[casa for casa in linha] for linha in nivel]for nivel in zip(*tabuleiro.peca_cor)]
     azimutes = [[[casa for casa in linha] for linha in zip(*nivel)]for nivel in zip(*tabuleiro.peca_cor)]
-
     [print(nivel) for nivel in tabuleiro.peca_cor]
     [print(nivel) for nivel in altitudes]    
-
     [print(nivel) for nivel in azimutes]
     # [print(nivel) for nivel in verticais_]
     # assert tabuleiro.casa[0][0] == [1,0,0], f" mas era {tabuleiro.casa[0][0]}"
@@ -148,7 +141,7 @@ if __name__ == '__main__':
         cnt = tabuleiro.atualiza(mx)
         assert cnt == 2, f"but was {cnt} in {bform.format(*mx)}"
         # print(" ".join(str(x) for x in mx))'''
-    
-    for i in range(0):    
-        tabuleiro.leitor()
+
+    for i in range(30):
+        tabuleiro._leitor()
         sleep(1)
