@@ -1,9 +1,8 @@
-from time import sleep
 import copy
+from time import sleep
 import serial
 
-leitura = serial.Serial('/dev/ttyACM0', 9600)
-
+leitura = serial.Serial('COM7', 9600)
 
 class Tabuleiro:
     def __init__(self):
@@ -50,7 +49,11 @@ class Tabuleiro:
         # print(diag)
         pontos += self.crivo(diag)
         print(self.mostra(cubo))
+        diagz0 = [[linha[desloca:][0] for desloca, linha in enumerate(nivel)]for nivel in colunas_z]
+        diagz1 = [[linha[:3 - desloca:][-1] for desloca, linha in enumerate(nivel)]for nivel in colunas_z]
+        pontos += self.crivo([diagz0, diagz1])
         pontos += self.crivo(colunas_z)
+        print(diagx0, diagx1, diagy0, diagy1, diagz0, diagz1)
 
         # print("Número de acertos", pontos)
         return pontos
@@ -83,14 +86,13 @@ class Tabuleiro:
             # print("tabuleiro",tabuleiro.casa)
             [print(linha) for nivel in tabuleiro.casa for linha in nivel]
 
-
 def main():
     tabuleiro_ = Tabuleiro()
     return tabuleiro_
 
-
 if __name__ == '__main__':
     tabuleiro = main()
+    
     '''pontos = tabuleiro.atualiza(list(range(1, 28)))
     assert 10 == pontos, f"no entanto deu {pontos}"
     pontos = tabuleiro.atualiza([1]*27)
@@ -103,7 +105,8 @@ if __name__ == '__main__':
     azimutes = [[[casa for casa in linha] for linha in zip(*nivel)]for nivel in zip(*tabuleiro.peca_cor)]
 
     [print(nivel) for nivel in tabuleiro.peca_cor]
-    [print(nivel) for nivel in altitudes]
+    [print(nivel) for nivel in altitudes]    
+
     [print(nivel) for nivel in azimutes]
     # [print(nivel) for nivel in verticais_]
     # assert tabuleiro.casa[0][0] == [1,0,0], f" mas era {tabuleiro.casa[0][0]}"
@@ -145,6 +148,7 @@ if __name__ == '__main__':
         cnt = tabuleiro.atualiza(mx)
         assert cnt == 2, f"but was {cnt} in {bform.format(*mx)}"
         # print(" ".join(str(x) for x in mx))'''
-    for i in range(0):
+    
+    for i in range(0):    
         tabuleiro.leitor()
         sleep(1)
