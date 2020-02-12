@@ -4,6 +4,7 @@ import serial
 
 leitura = serial.Serial('COM7', 9600)
 
+
 class Tabuleiro:
     def __init__(self):
         self.casa = [[[0, 0, 0]for _ in range(3)]for __ in range(3)]
@@ -86,9 +87,11 @@ class Tabuleiro:
             # print("tabuleiro",tabuleiro.casa)
             [print(linha) for nivel in tabuleiro.casa for linha in nivel]
 
+
 def main():
     tabuleiro_ = Tabuleiro()
     return tabuleiro_
+
 
 if __name__ == '__main__':
     tabuleiro = main()
