@@ -53,7 +53,7 @@ class Tabuleiro:
         # print(diag)
         pontos += self.crivo(diag)
         # print(self.mostra(cubo))
-        logging.info("debug:{} Cubo: {}".format(self.debug, self.mostra(cubo)))
+        logging.debug("debug:{} Cubo: {}".format(self.debug, self.mostra(cubo)))
         diagz0 = [[linha[desloca:][0] for desloca, linha in enumerate(nivel)]for nivel in colunas_z]
         diagz1 = [[linha[:3 - desloca:][-1] for desloca, linha in enumerate(nivel)]for nivel in colunas_z]
         pontos += self.crivo([diagz0, diagz1])
@@ -65,7 +65,7 @@ class Tabuleiro:
         diagonais = [[diagx0, diagx1], [diagy0, diagy1]]
         pontos += self.crivo(diagonais)
         fdiagonais = "debug:{} diagonais - x0:{} x1:{} y0:{} y1:{} z0:{} z1:{}"
-        logging.info(fdiagonais.format(self.debug, diagx0, diagx1, diagy0, diagy1, diagz0, diagz1))
+        logging.debug(fdiagonais.format(self.debug, diagx0, diagx1, diagy0, diagy1, diagz0, diagz1))
 
         # print("Número de acertos", pontos)
         return pontos
@@ -79,31 +79,44 @@ class Tabuleiro:
     def crivo(tabuleiro_):
         return sum([1 if (len(set(linha)) == 1 and 0 not in linha) else 0 for nivel in tabuleiro_ for linha in nivel])
 
-    def leitor(self):
+    def _leitor(self):
         lido = self._leitor.readline().decode("utf8") + ":"
         lido = lido.split()
         pontos = self.atualiza(lido)
 
-        print("Número de acertos", pontos)
+        logging.info("Número de acertos", pontos)
         return pontos
 
-    def _leitor(self):
+    def leitor(self):
         lido = self._leitor.readline().decode("utf8") + ":"
         lido = " ".join(lido.split())
         lido = lido.replace(":", " ")
         self.valor += lido
         tripa = self.valor.split("Nova Leitura")
+        # print(f"tripa : {self.valor}, {tripa}")
         if len(tripa) > 2:
-            atualizador = tripa[0].split()
+            atualizador = tripa[1].split()
             self.valor = ""
-            print(atualizador)
-            tabuleiro.atualiza(atualizador)
+            # logging.info(atualizador)
+            logging.info("Cubo: {}".format(self.mostra(atualizador)))
+            pontos = self.atualiza(atualizador)
+            logging.info(f"Número de acertos: {pontos}")
+            self.valor = ''
             # print("tabuleiro",tabuleiro.casa)
-            [print(linha) for nivel in tabuleiro.casa for linha in nivel]
+            # [print(linha) for nivel in tabuleiro.casa for linha in nivel]
+            return pontos
+        return -1
+
+
+class FalsoSerial:
+
+    def readline(self):
+        return b' 0 0 0 0 0 0 0 0 0\n 0 0 0 0 0 0 0 0 0\n 0 0 0 0 0 0 0 0 0\n'
 
 
 def main():
-    tabuleiro_ = Tabuleiro(serial.Serial('COM7', 9600))
+    # tabuleiro_ = Tabuleiro(FalsoSerial()) #(serial.Serial('COM7', 9600))
+    tabuleiro_ = Tabuleiro(serial.Serial('/dev/ttyACM0', 9600))
     return tabuleiro_
 
 
